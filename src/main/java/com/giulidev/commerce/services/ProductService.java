@@ -63,6 +63,14 @@ public class ProductService {
     }
     // ******************************************************************************************
 
+    // DELETANDO REGISTRO 🗑️
+    // ******************************************************************************************
+    @Transactional
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
+    // ******************************************************************************************
+
     // METODO AUXILIAR PARA CONVERSAO DE DTO PARA PRODUCT 🔁
     private void copyDtoToEntity (Product product, ProductDTO productDTO) {
         product.setName(productDTO.getName());

@@ -74,7 +74,7 @@ public class ProductController {
                 .toUri();
 
         // retorna a resposta 🔽 com a URI do objeto criado com o objeto no corpo
-        return ResponseEntity.created(uri).body(productDTO);
+        return ResponseEntity.created(uri).body(productDTO); // reposta "created" = 201
     }
     // ******************************************************************************************
 
@@ -85,6 +85,15 @@ public class ProductController {
         productDTO = productService.update(id, productDTO);
         // Envio da reposta personalizada (OK) e envio do DTO no corpo da resposta
         return ResponseEntity.ok(productDTO);
+    }
+    // ******************************************************************************************
+
+    // DELETANDO REGISTRO
+    // ******************************************************************************************
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> update(@PathVariable Long id) {
+        productService.delete(id);
+        return ResponseEntity.noContent().build(); // reposta "deletado com sucesso" = 204
     }
     // ******************************************************************************************
 
