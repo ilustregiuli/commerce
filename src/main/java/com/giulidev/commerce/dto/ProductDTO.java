@@ -5,12 +5,17 @@ import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
 
 public class ProductDTO {
 
 
     private Long id;
+
+    @NotBlank(message = "Campo 'Nome' não pode ser vazio!")
     private String name;
+
+    @NotBlank(message = "Campo 'Descrição' não pode ser vazio!")
     private String description;
     private Double price;
     private String imgUrl;

@@ -1,10 +1,9 @@
 package com.giulidev.commerce.controllers;
 
-
 import com.giulidev.commerce.dto.ProductDTO;
-import com.giulidev.commerce.entities.Product;
-import com.giulidev.commerce.repositories.ProductsRepository;
+
 import com.giulidev.commerce.services.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/products")
@@ -59,7 +56,7 @@ public class ProductController {
         return productService.insert(productDTO);
     } */
     @PostMapping
-    public ResponseEntity<ProductDTO> insert(@RequestBody ProductDTO productDTO) {
+    public ResponseEntity<ProductDTO> insert(@Valid @RequestBody ProductDTO productDTO) {
         // Salva o produto e devolve o resultado na mesma referência
         productDTO = productService.insert(productDTO);
 
@@ -81,17 +78,18 @@ public class ProductController {
     // ATUALIZANDO REGISTRO
     // ******************************************************************************************
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
-        productDTO = productService.update(id, productDTO);
-        // Envio da reposta personalizada (OK) e envio do DTO no corpo da resposta
-        return ResponseEntity.ok(productDTO);
+    public ResponseEntity<ProductDTO> update(@PathVariable Long id, @Valid @RequestBody ProductDTO productDTO) {
+            productDTO = productService.update(id, productDTO);
+            // Envio da reposta personalizada (OK) e envio do DTO no corpo da resposta
+            return ResponseEntity.ok(productDTO);
+
     }
     // ******************************************************************************************
 
     // DELETANDO REGISTRO
     // ******************************************************************************************
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         productService.delete(id);
         return ResponseEntity.noContent().build(); // reposta "deletado com sucesso" = 204
     }

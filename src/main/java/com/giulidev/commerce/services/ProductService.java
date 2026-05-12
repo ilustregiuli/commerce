@@ -3,14 +3,13 @@ package com.giulidev.commerce.services;
 import com.giulidev.commerce.dto.ProductDTO;
 import com.giulidev.commerce.entities.Product;
 import com.giulidev.commerce.repositories.ProductsRepository;
+import com.giulidev.commerce.services.exceptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -22,8 +21,14 @@ public class ProductService {
     // ****************************************************************************************
     // 🔢 POR ID
     @Transactional(readOnly = true)
+
+    // Optional tem um metodo que já confere se retornou um objeto do
+    //   banco ou caso não tenha retornado, lança um excpetion
+    // Então, posso usar minha exception personalizada
     public ProductDTO findByID(Long id) {
-        Product product = repository.findById(id).get();
+        Product product = repository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Recurso não encontrado.")
+        );
         return new ProductDTO(product);
     }
     // 💯 TODOS (PAGINADOS)
@@ -50,16 +55,21 @@ public class ProductService {
     public ProductDTO update(Long id, ProductDTO productDTO) {
        // crio uma referência do produto pelo ID que veio - preparo o objeto
         // ele é monitorado pela JPA
-       Product product = repository.getReferenceById(id);
+       try {
+           Product product = repository.getReferenceById(id);
+           // altero esse produto com os dados do DTO que veio
+           copyDtoToEntity(product, productDTO);
 
-       // altero esse produto com os dados do DTO que veio
-        copyDtoToEntity(product, productDTO);
+           // salvo esse novo produto com o objeto referenciado
+           product = repository.save(product);
 
-       // salvo esse novo produto com o objeto referenciado
-       product = repository.save(product);
+           // retorno pro controller o DTO alterado
+           return new ProductDTO(product);
 
-       // retorno pro controller o DTO alterado
-       return new ProductDTO(product);
+       } catch(EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Não existe esse produto, favor conferir!");
+       }
+
     }
     // ******************************************************************************************
 
